@@ -1,5 +1,6 @@
-PATH
-  remote: /home/admin1/rg_courses/rg_codebreaker
+GIT
+  remote: git://github.com/K-S-A/rg_codebreaker.git
+  revision: 6409ee442c57762b56a2093a0028efb1ca44bcf6
   specs:
     rg_codebreaker (0.3.1)
 
