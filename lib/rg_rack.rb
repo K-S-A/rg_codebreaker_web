@@ -15,30 +15,16 @@ class Racker
   def response
     case @request.path
     when "/" then Rack::Response.new(render("index.html.erb"))
-    when "/guess"
-      Rack::Response.new do |response|
-        @game = load('var')
-        response.set_cookie("guess_log", @request.cookies["guess_log"] + "*" + @game.compare(@request.params["guess"]))
-        response.set_cookie('var', dump(@game))
-        response.redirect("/")
-      end
-    when "/start"
-      @game.start
-      Rack::Response.new do |response|
-        response.set_cookie("guess_log", '*')
-        response.set_cookie("hint", '')
-        response.set_cookie('var', dump(@game))
-        response.redirect("/")
-      end
-    when '/hint'
-      @game = YAML::load(@request.cookies['var'])
-      Rack::Response.new do |response|
-        response.set_cookie("hint", @game.compare('hint'))
-        response.set_cookie('var', dump(@game))
-        response.redirect("/")
-      end
+    when "/guess" then guess
+    when "/start" then start
+    when '/hint' then hint
     else Rack::Response.new("Not Found", 404)
     end
+  end
+
+  def render(template)
+    path = File.expand_path("../views/#{template}", __FILE__)
+    ERB.new(File.read(path)).result(binding)
   end
 
   def load(cookie)
@@ -47,11 +33,6 @@ class Racker
 
   def dump(name)
     YAML::dump(name)
-  end
-
-  def render(template)
-    path = File.expand_path("../views/#{template}", __FILE__)
-    ERB.new(File.read(path)).result(binding)
   end
 
   def guess_log
@@ -68,8 +49,35 @@ class Racker
     YAML::load(@request.cookies['var']).attempts if @request.cookies['var']
   end
 
-  def hint
+  def help
     @request.cookies['hint']
   end
 
+  def start
+    @game.start
+    Rack::Response.new do |response|
+      response.set_cookie("guess_log", '*')
+      response.set_cookie("hint", '')
+      response.set_cookie('var', dump(@game))
+      response.redirect("/")
+    end
+  end
+
+  def guess
+    Rack::Response.new do |response|
+      @game = load('var')
+      response.set_cookie("guess_log", @request.cookies["guess_log"] + "*" + @game.compare(@request.params["guess"]))
+      response.set_cookie('var', dump(@game))
+      response.redirect("/")
+    end
+  end
+
+  def hint
+    @game = YAML::load(@request.cookies['var'])
+    Rack::Response.new do |response|
+      response.set_cookie("hint", @game.compare('hint'))
+      response.set_cookie('var', dump(@game))
+      response.redirect("/")
+    end
+  end
 end

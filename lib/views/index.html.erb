@@ -19,14 +19,14 @@
       <div id="attempt">
         <p>Attempts left: <%= attempt %></p>
       </div>
-      <% if hint == '' %>
+      <% if help == '' %>
         <div id="hint">
         <form method="post" action="/hint">
           <input type="submit" value="Get hint!">
         </form>
       </div>
       <% else %>
-      <h1>---<%= hint %>---</h1>
+      <h1>---<%= help %>---</h1>
       <% end %>
     <% end %>
       <% unless flash == '' %>
