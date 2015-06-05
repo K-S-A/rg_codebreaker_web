@@ -43,9 +43,7 @@ class Racker
     @request.cookies["guess_log"].split('*').reject{|i| i == 'Invalid guess, try again:' }.reject(&:empty?).reverse || []
   end
   def flash
-    'Invalid guess, try again:' if @request.cookies["guess_log"].split('*').last == 'Invalid guess, try again:'
+    'Invalid guess, try again!' if @request.cookies["guess_log"].split('*').last == 'Invalid guess, try again:'
   end
-  def attempt
-    @game.attempts
-  end
+
 end
