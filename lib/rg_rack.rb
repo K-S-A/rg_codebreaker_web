@@ -9,7 +9,6 @@ class Racker
 
   def initialize(env)
     @request = Rack::Request.new(env)
-    @game = RgCodebreaker::Game.new
   end
 
   def response
@@ -24,6 +23,7 @@ class Racker
         response.redirect("/")
       end
     when "/start"
+      @game = RgCodebreaker::Game.new
       @game.start
       Rack::Response.new do |response|
         response.set_cookie("guess_log", '*')
@@ -40,17 +40,17 @@ class Racker
   end
 
   def guess_log
-    @request.cookies["guess_log"].split('*').reject{|i| i == 'Invalid guess, try again:' }.reject(&:empty?).reverse || [] unless @request.cookies["guess_log"].nil?
+    @request.cookies["guess_log"].split('*').reject{|i| i == 'Invalid guess, try again:' }.reject(&:empty?).reverse || [] if @request.cookies["guess_log"]
   end
+
   def flash
-    unless @request.cookies["guess_log"].nil?
+    if @request.cookies["guess_log"]
       'Invalid guess, try again!' if @request.cookies["guess_log"].split('*').last == 'Invalid guess, try again:'
     end
   end
 
   def attempt
-    @game = YAML::load(@request.cookies['var'])
-    @game.attempts
+    YAML::load(@request.cookies['var']).attempts if @request.cookies['var']
   end
 
 end

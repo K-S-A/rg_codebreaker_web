@@ -9,21 +9,23 @@
         <input type="submit" value="Start new game!">
       </form>
     </div>
+    <% if attempt %>
     <div id="container">
       <p>Enter your guess:</p>
       <form method="post" action="/guess">
         <input name="guess" type="text">
         <input type="submit" value="Go!">
       </form>
-    <div id="attempt">
-      <p>Attempts left: <%= attempt %></p>
-    </div>
+      <div id="attempt">
+        <p>Attempts left: <%= attempt %></p>
+      </div>
+      <% end %>
       <% unless flash == '' %>
         <div id="flash">
           <p> <%= flash %></p>
         </div>
       <% end %>
-      <% unless guess_log.nil? %>
+      <% if guess_log %>
         <% guess_log.each do |item| %>
           <h2><%= item %></h2>
         <% end %>
