@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CodeBreaker</title>
+  </head>
+  <body>
+      <div id="start">
+        <form method="post" action="/start">
+          <input type="submit" value="Start new game!">
+        </form>
+      </div>
+    <div id="attempts">
+    <p><%= @game.attempts %></p>
+    </div>
+    <div id="container">
+      <p>Enter your guess:</p>
+      <form method="post" action="/guess">
+        <input name="guess" type="text">
+        <input type="submit" value="Go!">
+      </form>
+      <% unless flash == '' %>
+        <div id="flash">
+          <p> <%= flash %></p>
+        </div>
+      <% end %>
+      <% unless guess_log.nil? %>
+        <% guess_log.each do |item| %>
+          <h2><%= item %></h2>
+        <% end %>
+    <% end %>
+    </div>
+  </body>
+</html>
