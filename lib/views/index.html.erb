@@ -4,17 +4,20 @@
     <title>CodeBreaker</title>
   </head>
   <body>
-      <div id="start">
-        <form method="post" action="/start">
-          <input type="submit" value="Start new game!">
-        </form>
-      </div>
+    <div id="start">
+      <form method="post" action="/start">
+        <input type="submit" value="Start new game!">
+      </form>
+    </div>
     <div id="container">
       <p>Enter your guess:</p>
       <form method="post" action="/guess">
         <input name="guess" type="text">
         <input type="submit" value="Go!">
       </form>
+    <div id="attempt">
+      <p>Attempts left: <%= attempt %></p>
+    </div>
       <% unless flash == '' %>
         <div id="flash">
           <p> <%= flash %></p>

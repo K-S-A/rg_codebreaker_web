@@ -40,10 +40,17 @@ class Racker
   end
 
   def guess_log
-    @request.cookies["guess_log"].split('*').reject{|i| i == 'Invalid guess, try again:' }.reject(&:empty?).reverse || []
+    @request.cookies["guess_log"].split('*').reject{|i| i == 'Invalid guess, try again:' }.reject(&:empty?).reverse || [] unless @request.cookies["guess_log"].nil?
   end
   def flash
-    'Invalid guess, try again!' if @request.cookies["guess_log"].split('*').last == 'Invalid guess, try again:'
+    unless @request.cookies["guess_log"].nil?
+      'Invalid guess, try again!' if @request.cookies["guess_log"].split('*').last == 'Invalid guess, try again:'
+    end
+  end
+
+  def attempt
+    @game = YAML::load(@request.cookies['var'])
+    @game.attempts
   end
 
 end
