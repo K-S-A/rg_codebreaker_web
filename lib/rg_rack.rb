@@ -27,7 +27,14 @@ class Racker
       @game.start
       Rack::Response.new do |response|
         response.set_cookie("guess_log", '*')
+        response.set_cookie("hint", '')
         response.set_cookie("var", YAML::dump(@game))
+        response.redirect("/")
+      end
+    when '/hint'
+      @game = YAML::load(@request.cookies['var'])
+      Rack::Response.new do |response|
+        response.set_cookie("hint", @game.compare('hint'))
         response.redirect("/")
       end
     else Rack::Response.new("Not Found", 404)
@@ -40,17 +47,21 @@ class Racker
   end
 
   def guess_log
-    @request.cookies["guess_log"].split('*').reject{|i| i == 'Invalid guess, try again:' }.reject(&:empty?).reverse || [] if @request.cookies["guess_log"]
+    @request.cookies["guess_log"].split('*').reject{|i| i == 'invalid' || i.empty?}.reverse || [] if @request.cookies["guess_log"]
   end
 
   def flash
     if @request.cookies["guess_log"]
-      'Invalid guess, try again!' if @request.cookies["guess_log"].split('*').last == 'Invalid guess, try again:'
+      'Invalid guess, try again!' if @request.cookies["guess_log"].split('*').last == 'invalid'
     end
   end
 
   def attempt
     YAML::load(@request.cookies['var']).attempts if @request.cookies['var']
+  end
+
+  def hint
+    @request.cookies['hint']
   end
 
 end
