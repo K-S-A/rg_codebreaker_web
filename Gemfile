@@ -18,4 +18,4 @@ source "https://rubygems.org"
 
   gem "pg"
 
-  gem "rg_codebreaker", :path => '/home/admin1/rg_courses/rg_codebreaker/'
+  gem 'rg_codebreaker', :git => 'git://github.com/K-S-A/rg_codebreaker.git'
