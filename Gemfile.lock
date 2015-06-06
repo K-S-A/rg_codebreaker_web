@@ -13,6 +13,8 @@ GEM
       rspec (~> 3.0)
       ruby-progressbar (~> 1.4)
     pg (0.18.2)
+    puma (2.11.3)
+      rack (>= 1.1, < 2.0)
     rack (1.6.1)
     rake (10.4.2)
     rspec (3.2.0)
@@ -40,6 +42,7 @@ DEPENDENCIES
   coderay
   fuubar
   pg
+  puma
   rack
   rake (~> 10.0)
   rg_codebreaker!
