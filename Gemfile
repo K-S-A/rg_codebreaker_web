@@ -1,7 +1,6 @@
-# A sample Gemfile
 source "https://rubygems.org"
+ruby '2.2.2'
 
-# gem "rails"
   gem "bundler", "~> 1.9"
 
   gem "rake", "~> 10.0"
