@@ -9,36 +9,39 @@
         <input type="submit" value="Start new game!">
       </form>
     </div>
-    <% if attempt %>
+    <% if @game.attempts %>
     <div id="container">
       <p>Enter your guess:</p>
       <form method="post" action="/guess">
         <input name="guess" type="text">
         <input type="submit" value="Go!">
       </form>
-      <div id="attempt">
-        <p>Attempts left: <%= attempt %></p>
-      </div>
-      <% if help == '' %>
-        <div id="hint">
+    </div>
+    <div id="attempt">
+      <p>Attempts left: <%= @game.attempts %></p>
+    </div>
+    <% unless help%>
+      <div id="hint">
         <form method="post" action="/hint">
           <input type="submit" value="Get hint!">
         </form>
       </div>
       <% else %>
-      <h1>---<%= help %>---</h1>
-      <% end %>
-    <% end %>
-      <% unless flash == '' %>
-        <div id="flash">
-          <p> <%= flash %></p>
+        <div id="hint">
+          <p>Hint: ---<%= help %>---</p>
         </div>
       <% end %>
-      <% if guess_log %>
-        <% guess_log.each do |item| %>
-          <h2><%= item %></h2>
-        <% end %>
     <% end %>
+    <% if flash %>
+      <div id="flash">
+        <p> <%= flash %></p>
+      </div>
+    <% end %>
+    <% if guess_log %>
+      <% guess_log.each do |item| %>
+        <h2><%= item %></h2>
+      <% end %>
     </div>
+  <% end %>
   </body>
 </html>
