@@ -8,10 +8,8 @@ ruby '2.2.2'
   gem 'rg_codebreaker', :git => 'git://github.com/K-S-A/rg_codebreaker.git'
 
 group :development do
-
   gem "rspec", "~> 3.2.0"
   gem "rspec-collection_matchers"
   gem "fuubar"
   gem "coderay"
-
 end
