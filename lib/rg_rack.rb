@@ -1,6 +1,7 @@
 require 'erb'
 require 'rg_codebreaker'
 require 'yaml'
+require 'base64'
 
 class Racker
   def self.call(env)
@@ -9,7 +10,7 @@ class Racker
 
   def initialize(env)
     @request = Rack::Request.new(env)
-    @game = @request.cookies['var'] ? YAML::load(@request.cookies['var']) : RgCodebreaker::Game.new
+    @game = @request.cookies['var'] ? YAML::load(Base64.decode64(@request.cookies['var'])) : RgCodebreaker::Game.new
   end
 
   def response
@@ -18,7 +19,7 @@ class Racker
       when '/start' then start
       when '/guess' then guess
       when '/hint'  then hint
-      else          Rack::Response.new("Not Found", 404)
+      else               Rack::Response.new("Not Found", 404)
     end
   end
 
@@ -45,7 +46,7 @@ class Racker
   end
 
   def dump(response)
-    response.set_cookie('var', YAML::dump(@game))
+    response.set_cookie('var', Base64.encode64(YAML::dump(@game)))
     response.redirect('/')
   end
 
