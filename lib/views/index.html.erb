@@ -10,38 +10,38 @@
       </form>
     </div>
     <% if @game.attempts %>
-    <div id="container">
-      <p>Enter your guess:</p>
-      <form method="post" action="/guess">
-        <input name="guess" type="text">
-        <input type="submit" value="Go!">
-      </form>
-    </div>
-    <div id="attempt">
-      <p>Attempts left: <%= @game.attempts %></p>
-    </div>
-    <% unless help%>
-      <div id="hint">
-        <form method="post" action="/hint">
-          <input type="submit" value="Get hint!">
+      <div id="container">
+        <p>Enter your guess:</p>
+        <form method="post" action="/guess">
+          <input name="guess" type="text">
+          <input type="submit" value="Go!">
         </form>
       </div>
-      <% else %>
+      <div id="attempt">
+        <p>Attempts left: <%= @game.attempts %></p>
+      </div>
+      <% unless help%>
         <div id="hint">
-          <p>Hint: ---<%= help %>---</p>
+          <form method="post" action="/hint">
+            <input type="submit" value="Get hint!">
+          </form>
+        </div>
+        <% else %>
+          <div id="hint">
+            <p>Hint: ---<%= help %>---</p>
+          </div>
+        <% end %>
+      <% end %>
+      <% if flash %>
+        <div id="flash">
+          <p> <%= flash %></p>
         </div>
       <% end %>
-    <% end %>
-    <% if flash %>
-      <div id="flash">
-        <p> <%= flash %></p>
+      <% if guess_log %>
+        <% guess_log.each do |item| %>
+          <h2><%= item %></h2>
+        <% end %>
       </div>
     <% end %>
-    <% if guess_log %>
-      <% guess_log.each do |item| %>
-        <h2><%= item %></h2>
-      <% end %>
-    </div>
-  <% end %>
   </body>
 </html>

@@ -17,8 +17,8 @@ class Racker
       when '/'      then Rack::Response.new(render("index.html.erb"))
       when '/start' then start
       when '/guess' then guess
-      when '/hint'      then hint
-      else            Rack::Response.new("Not Found", 404)
+      when '/hint'  then hint
+      else          Rack::Response.new("Not Found", 404)
     end
   end
 
