@@ -14,11 +14,11 @@ class Racker
 
   def response
     case @request.path
-      when '/'        then Rack::Response.new(render("index.html.erb"))
-      when '/start'   then start
-      when '/guess'   then guess
-      when '/hint'        then hint
-      else                  Rack::Response.new("Not Found", 404)
+      when '/'      then Rack::Response.new(render("index.html.erb"))
+      when '/start' then start
+      when '/guess' then guess
+      when '/hint'      then hint
+      else            Rack::Response.new("Not Found", 404)
     end
   end
 
@@ -32,7 +32,7 @@ class Racker
 
   def guess
     Rack::Response.new do |response|
-      response.set_cookie('guess_log', "#{(@request.cookies['guess_log'] || '')}*#{@game.compare(@request.params['guess'])}")
+      response.set_cookie('guess_log', "#{@request.cookies['guess_log'] || ''}*#{@game.compare(@request.params['guess'])}")
       dump(response)
     end
   end
@@ -42,6 +42,11 @@ class Racker
       response.set_cookie('hint', @game.compare('hint'))
       dump(response)
     end
+  end
+
+  def dump(response)
+    response.set_cookie('var', YAML::dump(@game))
+    response.redirect('/')
   end
 
   def guess_log
@@ -54,11 +59,6 @@ class Racker
 
   def help
     @request.cookies['hint']
-  end
-
-  def dump(response)
-    response.set_cookie('var', YAML::dump(@game))
-    response.redirect('/')
   end
 
   def render(template)
