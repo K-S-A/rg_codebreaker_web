@@ -1,8 +1,8 @@
 GIT
   remote: git://github.com/K-S-A/rg_codebreaker.git
-  revision: 0906d6c66784c61fb4fba49c81424a99a96f00f3
+  revision: b38596c1a85d55b5a74b596f6c09f6ee784ada2f
   specs:
-    rg_codebreaker (0.4.0)
+    rg_codebreaker (0.4.1)
 
 GEM
   remote: https://rubygems.org/
