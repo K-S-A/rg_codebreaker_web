@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/K-S-A/rg_codebreaker.git
-  revision: b5d2f65cda64629733527f3e6bcf01b991226692
+  revision: 0906d6c66784c61fb4fba49c81424a99a96f00f3
   specs:
     rg_codebreaker (0.4.0)
 
