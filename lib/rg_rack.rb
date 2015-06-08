@@ -80,7 +80,7 @@ class Racker
   end
 
   def stat_games_played
-    @game.statistics.sort_by { |name, games| games.count }.reverse
+    @game.statistics ? @game.statistics.sort_by { |name, games| games.count }.reverse : {}
   end
 
   def render(template)
