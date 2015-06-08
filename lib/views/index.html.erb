@@ -9,7 +9,22 @@
         <input type="submit" value="Start new game!">
       </form>
     </div>
-    <% if @game.attempts %>
+    <% if guess_log && !flash && guess_log.first.include?('++++')%>
+      <% unless saved %>
+        <div id="winner">
+          <p><b>Congratulations!!! You're break this code!</b></p>
+          <p>If you want to save this game, please, enter your name:</p>
+          <form method="post" action="/save">
+            <input name="save" type="text" value=<%= player_name %>>
+            <input type="submit" value="Save progress!">
+          </form>
+        </div>
+      <% else %>
+        <div id="winner">
+          <p><b><%= player_name %></b>, your game successfully saved!</p>
+        </div>
+      <% end %>
+    <% elsif @game.attempts %>
       <div id="container">
         <p>Enter your guess:</p>
         <form method="post" action="/guess">
@@ -38,8 +53,18 @@
         </div>
       <% end %>
       <% if guess_log %>
-        <% guess_log.each do |item| %>
-          <h2><%= item %></h2>
+        <div id="guess">
+          <% guess_log.each do |item| %>
+            <h2><%= item %></h2>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+    <% if stat_games_played %>
+      <div id="games_played">
+        <h2><b>Assertive players</b> (total games played)</h2>
+        <% stat_games_played.each.with_index(1) do |item, index| %>
+          <h3><%= index %>. <%= item.first %> - <%= item.last.count %></h3>
         <% end %>
       </div>
     <% end %>
