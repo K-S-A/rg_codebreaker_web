@@ -4,27 +4,40 @@
     <title>CodeBreaker</title>
   </head>
   <body>
+<%# start (button) %>
     <div id="start">
       <form method="post" action="/start">
         <input type="submit" value="Start new game!">
       </form>
     </div>
-    <% if guess_log && !flash && guess_log.first.include?('++++')%>
+    <% if loose %>
+<%# loose %>
+      <div id="loose">
+        <p>You've used all attempts but code is still unbroken.</p>
+        <p>Don't give up - just hit <b>"Start new game!"</b> button.</p>
+      </div>
+    <% elsif win %>
+<%# save (render if player win the game); do not save results if name is empty %>
       <% unless saved %>
         <div id="winner">
-          <p><b>Congratulations!!! You're break this code!</b></p>
+          <p><b>Congratulations!!! You've breaked this code, <%= @player_name %>!</b></p>
           <p>If you want to save this game, please, enter your name:</p>
           <form method="post" action="/save">
-            <input name="save" type="text" value=<%= player_name %>>
+            <input name="save" type="text" value=<%= @player_name %>>
             <input type="submit" value="Save progress!">
           </form>
         </div>
       <% else %>
         <div id="winner">
-          <p><b><%= player_name %></b>, your game successfully saved!</p>
+          <% unless @request.cookies['name'] %>
+            <p>Name can't be blank. Game is not saved!</p>
+          <% else %>
+            <p><b><%= @player_name %></b>, your game successfully saved!</p>
+          <% end %>
         </div>
       <% end %>
-    <% elsif @game.attempts %>
+    <% elsif attempts %>
+<%# guess %>
       <div id="container">
         <p>Enter your guess:</p>
         <form method="post" action="/guess">
@@ -32,39 +45,61 @@
           <input type="submit" value="Go!">
         </form>
       </div>
+<%# attempts %>
       <div id="attempt">
-        <p>Attempts left: <%= @game.attempts %></p>
+        <p>Attempts left: <%= attempts %></p>
       </div>
+<%# hint %>
       <% unless help%>
         <div id="hint">
           <form method="post" action="/hint">
             <input type="submit" value="Get hint!">
           </form>
         </div>
-        <% else %>
-          <div id="hint">
-            <p>Hint: ---<%= help %>---</p>
-          </div>
-        <% end %>
-      <% end %>
-      <% if flash %>
-        <div id="flash">
-          <p> <%= flash %></p>
+      <% else %>
+        <div id="hint">
+          <p>Hint: ---<%= help %>---</p>
         </div>
       <% end %>
-      <% if guess_log %>
-        <div id="guess">
-          <% guess_log.each do |item| %>
-            <h2><%= item %></h2>
-          <% end %>
-        </div>
+    <% end %>
+<%# flash (message apperas if guess have invalid format) %>
+    <% if flash %>
+      <div id="flash">
+      <p> <%= flash %></p>
       </div>
     <% end %>
+<%# guess_log %>
+    <% if guess_log %>
+      <div id="guess">
+        <% guess_log.each do |item| %>
+          <h2><%= item %></h2>
+        <% end %>
+      </div>
+    <% end %>
+<%# statistics - by total games played %>
     <% if stat_games_played %>
       <div id="games_played">
         <h2><b>Assertive players</b> (total games played)</h2>
         <% stat_games_played.each.with_index(1) do |item, index| %>
           <h3><%= index %>. <%= item.first %> - <%= item.last.count %></h3>
+        <% end %>
+      </div>
+    <% end %>
+<%# statistics - by total games won %>
+    <% if stat_games_won %>
+      <div id="games_won">
+        <h2><b>The most winning players</b> (total games won)</h2>
+        <% stat_games_won.each.with_index(1) do |item, index| %>
+          <h3><%= index %>. <%= item.first %> - <%= item.last.count %></h3>
+        <% end %>
+      </div>
+    <% end %>
+<%# statistics - by the rate of games won to total games played (in %) %>
+    <% if stat_games_quot %>
+      <div id="games_quot">
+        <h2><b>Players with the highest win rate</b></h2>
+        <% stat_games_quot.each.with_index(1) do |item, index| %>
+          <h3><%= index %>. <%= item.first %> - <%= item.last %></h3>
         <% end %>
       </div>
     <% end %>

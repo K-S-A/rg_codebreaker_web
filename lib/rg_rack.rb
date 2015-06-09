@@ -10,6 +10,7 @@ class Racker
   def initialize(env)
     @request = Rack::Request.new(env)
     @game = @request.cookies['var'] ? YAML::load(Base64.decode64(@request.cookies['var'])) : RgCodebreaker::Game.new
+    @player_name = player_name
   end
 
   def response
@@ -34,6 +35,7 @@ class Racker
   def guess
     Rack::Response.new do |response|
       response.set_cookie('guess_log', "#{@request.cookies['guess_log'] || ''}*#{@game.compare(@request.params['guess'])}")
+      save(@request.cookies['name']) if @request.cookies['name'] && loose
       dump(response)
     end
   end
@@ -45,11 +47,13 @@ class Racker
     end
   end
 
-  def save
-    @game.save(@request.params['save'])
+  def save(name = @request.params['save'])
     Rack::Response.new do |response|
-      response.set_cookie('name', @request.params['save'])
-      response.set_cookie('saved', 'true')
+      unless name == ''
+        @game.save(name)
+        response.set_cookie('name', name)
+      end
+      response.set_cookie('saved', name)
       dump(response)
     end
   end
@@ -71,6 +75,10 @@ class Racker
     @request.cookies['hint']
   end
 
+  def attempts
+    @game.attempts
+  end
+
   def player_name
     @request.cookies['name'] || "UnnamedPlayer#{rand(999)}"
   end
@@ -79,13 +87,40 @@ class Racker
     @request.cookies['saved']
   end
 
+  def loose
+    attempts && attempts < 1 && !guess_log.first.include?('++++')
+  end
+
+  def win
+    guess_log && guess_log.last && guess_log.first.include?('++++')
+  end
+
   def stat_games_played
-    @game.statistics ? @game.statistics.sort_by { |name, games| games.count }.reverse : {}
+    stat_desc_sort(statistics)
+  end
+
+  def stat_games_won
+    order = statistics.each { |name, games| games.reject!{ |game| game.attempts == 0 } }
+    order = order.reject { |name, games| games.count == 0 }
+    stat_desc_sort(order)
+  end
+
+  def stat_games_quot
+    order = stat_games_won.each_with_object({}) {|item, hsh| hsh[item.first] = (item.last.count.to_f / stat_games_played.to_h[item.first].count * 100).round(2) }
+    order.sort_by { |name, quot| quot }.reverse
+  end
+
+  def statistics
+    @game.statistics ? @game.statistics : {}
+  end
+
+  def stat_desc_sort(item)
+    item.sort_by { |name, games| games.count }.reverse
   end
 
   def render(template)
     path = File.expand_path("../views/#{template}", __FILE__)
-    ERB.new(File.read(path)).result(binding)
+    ERB.new(File.read(path), nil, '>').result(binding)
   end
 
 end
