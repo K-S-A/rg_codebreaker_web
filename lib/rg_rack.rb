@@ -11,6 +11,7 @@ class Racker
     @request = Rack::Request.new(env)
     @game = @request.cookies['var'] ? YAML::load(Base64.decode64(@request.cookies['var'])) : RgCodebreaker::Game.new
     @player_name = player_name
+    @top = 4
   end
 
   def response
@@ -95,18 +96,18 @@ class Racker
     guess_log && guess_log.last && guess_log.first.include?('++++')
   end
 
-  def stat_games_played
-    stat_desc_sort(statistics)
+  def stat_games_played(size = @top)
+    stat_desc_sort(statistics)[0..size]
   end
 
-  def stat_games_won
+  def stat_games_won(size = @top)
     order = statistics.each { |name, games| games.reject!{ |game| game.attempts == 0 } }
     order = order.reject { |name, games| games.count == 0 }
-    stat_desc_sort(order)
+    stat_desc_sort(order)[0..size]
   end
 
   def stat_games_quot
-    order = stat_games_won.each_with_object({}) {|item, hsh| hsh[item.first] = (item.last.count.to_f / stat_games_played.to_h[item.first].count * 100).round(2) }
+    order = stat_games_won.each_with_object({}) {|item, hsh| hsh[item.first] = (item.last.count.to_f / stat_games_played(-1).to_h[item.first].count * 100).round(2) }
     order.sort_by { |name, quot| quot }.reverse
   end
 

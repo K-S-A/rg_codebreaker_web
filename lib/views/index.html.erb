@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>CodeBreaker</title>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/codebreaker.css">
   </head>
   <body>
 <%# start (button) %>
@@ -24,7 +25,7 @@
           <p>If you want to save this game, please, enter your name:</p>
           <form method="post" action="/save">
             <input name="save" type="text" value=<%= @player_name %>>
-            <input type="submit" value="Save progress!">
+            <input style="color:black;background: #133283;font-size: 20px;border: inset black;" type="submit" value="Save progress!">
           </form>
         </div>
       <% else %>
@@ -42,12 +43,12 @@
         <p>Enter your guess:</p>
         <form method="post" action="/guess">
           <input name="guess" type="text">
-          <input type="submit" value="Go!">
+          <input style="color:black;background: #133283;font-size: 20px;border: inset black;" type="submit" value="Go!">
         </form>
       </div>
 <%# attempts %>
       <div id="attempt">
-        <p>Attempts left: <%= attempts %></p>
+        <p>Attempts left: <b><%= attempts %></b></p>
       </div>
 <%# hint %>
       <% unless help%>
@@ -72,36 +73,44 @@
     <% if guess_log %>
       <div id="guess">
         <% guess_log.each do |item| %>
-          <h2><%= item %></h2>
+          <h2><%= item.chars.delete_if { |char| char == '[' || char == ']' || char == ','}.join %></h2>
         <% end %>
       </div>
     <% end %>
 <%# statistics - by total games played %>
-    <% if stat_games_played %>
-      <div id="games_played">
-        <h2><b>Assertive players</b> (total games played)</h2>
-        <% stat_games_played.each.with_index(1) do |item, index| %>
-          <h3><%= index %>. <%= item.first %> - <%= item.last.count %></h3>
-        <% end %>
-      </div>
-    <% end %>
+    <div id="statistics">
+      <% if stat_games_played %>
+        <div id="games_played">
+          <p><b>Assertive players</b> (total games played)</p>
+          <ol>
+            <% stat_games_played.each do |name, games| %>
+              <li>"<%= name %>" - <%= games.count %></li>
+            <% end %>
+          </ol>
+        </div>
+      <% end %>
 <%# statistics - by total games won %>
-    <% if stat_games_won %>
-      <div id="games_won">
-        <h2><b>The most winning players</b> (total games won)</h2>
-        <% stat_games_won.each.with_index(1) do |item, index| %>
-          <h3><%= index %>. <%= item.first %> - <%= item.last.count %></h3>
-        <% end %>
-      </div>
-    <% end %>
+      <% if stat_games_won %>
+        <div id="games_won">
+          <p><b>The most winning players</b> (total games won)</p>
+          <ol>
+            <% stat_games_won.each do |name, games| %>
+              <li><%= name %> - <%= games.count %></li>
+            <% end %>
+          </ol>
+        </div>
+      <% end %>
 <%# statistics - by the rate of games won to total games played (in %) %>
-    <% if stat_games_quot %>
-      <div id="games_quot">
-        <h2><b>Players with the highest win rate</b></h2>
-        <% stat_games_quot.each.with_index(1) do |item, index| %>
-          <h3><%= index %>. <%= item.first %> - <%= item.last %></h3>
-        <% end %>
-      </div>
-    <% end %>
+      <% if stat_games_quot %>
+        <div id="games_quot">
+          <p><b>Players with the highest win rate</b></p>
+          <ol>
+            <% stat_games_quot.each do |name, quot| %>
+              <li><%= name %> - <%= quot %>%</li>
+            <% end %>
+          </ol>
+        </div>
+      <% end %>
+    </div>
   </body>
 </html>
