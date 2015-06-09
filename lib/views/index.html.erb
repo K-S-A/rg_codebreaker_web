@@ -73,7 +73,7 @@
     <% if guess_log %>
       <div id="guess">
         <% guess_log.each do |item| %>
-          <h2><%= item.chars.delete_if { |char| char == '[' || char == ']' || char == ','}.join %></h2>
+          <h2>"<%= item.first %>" >> "<%= item.last %>"</h2>
         <% end %>
       </div>
     <% end %>
@@ -107,6 +107,17 @@
           <ol>
             <% stat_games_quot.each do |name, quot| %>
               <li><%= name %> - <%= quot %>%</li>
+            <% end %>
+          </ol>
+        </div>
+      <% end %>
+<%# statistics - by the time needed to break code %>
+      <% if stat_duration %>
+        <div id="games_duration">
+          <p><b>Fastest players</b></p>
+          <ol>
+            <% stat_duration.each do |name, tm| %>
+              <li><%= name %> - <%= tm %> sec</li>
             <% end %>
           </ol>
         </div>

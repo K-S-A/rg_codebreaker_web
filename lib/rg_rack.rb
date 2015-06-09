@@ -25,17 +25,19 @@ class Racker
     end
   end
 
+private
+
   def start
     @game.start
     Rack::Response.new do |response|
-      %w(hint guess_log saved).each { |cookie| response.delete_cookie(cookie) }
+      %w(hint saved).each { |cookie| response.delete_cookie(cookie) }
       dump(response)
     end
   end
 
   def guess
     Rack::Response.new do |response|
-      response.set_cookie('guess_log', "#{@request.cookies['guess_log'] || ''}*#{@game.compare(@request.params['guess'])}")
+      @game.compare(@request.params['guess'])
       save(@request.cookies['name']) if @request.cookies['name'] && loose
       dump(response)
     end
@@ -65,11 +67,11 @@ class Racker
   end
 
   def guess_log
-    @request.cookies['guess_log'].split('*').reject{|i| i == 'invalid' || i.empty?}.reverse if @request.cookies['guess_log']
+    @game.guess_log.reverse
   end
 
   def flash
-      'Invalid guess, try again!' if @request.cookies['guess_log'] && @request.cookies['guess_log'].split('*').last == 'invalid'
+      'Invalid guess, try again!' if @game.invalid
   end
 
   def help
@@ -89,36 +91,44 @@ class Racker
   end
 
   def loose
-    attempts && attempts < 1 && !guess_log.first.include?('++++')
+    attempts && attempts < 1 && !win
   end
 
   def win
-    guess_log && guess_log.last && guess_log.first.include?('++++')
+    guess_log.first && guess_log.first.include?('++++')
   end
 
   def stat_games_played(size = @top)
-    stat_desc_sort(statistics)[0..size]
+    stat_desc_sort(statistics, size)
   end
 
   def stat_games_won(size = @top)
-    stat_desc_sort(statistics.each { |name, games| games.reject!{ |game| game.attempts == 0 } }.reject { |name, games| games.count == 0 })[0..size]
+    item = statistics.each { |name, games| games.reject!{ |game| game.attempts == 0 } }
+    stat_desc_sort(item, size)
   end
 
-  def stat_games_quot
-    stat_games_won.each_with_object({}) {|item, hsh| hsh[item.first] = (item.last.count.to_f / stat_games_played(-1).to_h[item.first].count * 100).round(2) }.sort_by { |name, quot| quot }.reverse
+  def stat_games_quot(size = @top)
+    stat = stat_games_won(-1).each_with_object({}) {|(name, games), hsh| hsh[name] =\
+      (games.count.to_f / stat_games_played(-1).to_h[name].count * 100).round(2) }
+      stat_desc_sort(stat, size)
   end
 
+  def stat_duration(size = @top)
+    item = stat_games_won.each_with_object({}) { |(name, games), hsh| hsh[name] = games.map {|i| i.duration}.min }
+    stat_desc_sort(item, size).reverse
+  end
 
   def stat_win_streak
-
+#    item = stat_games_played.each_with_object({}) { |(name, games), hsh| hsh[name] = games.map {|i| i.duration}.min }
+#    stat_desc_sort(item, size)
   end
 
   def statistics
     @game.statistics ? @game.statistics : {}
   end
 
-  def stat_desc_sort(item)
-    item.sort_by { |name, games| games.count }.reverse
+  def stat_desc_sort(item, size)
+    item.sort_by { |name, games| games.is_a?(Array) ? games.count : games }.reverse[0..size]
   end
 
   def render(template)
