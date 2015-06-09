@@ -101,14 +101,16 @@ class Racker
   end
 
   def stat_games_won(size = @top)
-    order = statistics.each { |name, games| games.reject!{ |game| game.attempts == 0 } }
-    order = order.reject { |name, games| games.count == 0 }
-    stat_desc_sort(order)[0..size]
+    stat_desc_sort(statistics.each { |name, games| games.reject!{ |game| game.attempts == 0 } }.reject { |name, games| games.count == 0 })[0..size]
   end
 
   def stat_games_quot
-    order = stat_games_won.each_with_object({}) {|item, hsh| hsh[item.first] = (item.last.count.to_f / stat_games_played(-1).to_h[item.first].count * 100).round(2) }
-    order.sort_by { |name, quot| quot }.reverse
+    stat_games_won.each_with_object({}) {|item, hsh| hsh[item.first] = (item.last.count.to_f / stat_games_played(-1).to_h[item.first].count * 100).round(2) }.sort_by { |name, quot| quot }.reverse
+  end
+
+
+  def stat_win_streak
+
   end
 
   def statistics
