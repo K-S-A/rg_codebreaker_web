@@ -1,4 +1,4 @@
-=begin
+
 source "https://rubygems.org"
 ruby '2.2.2'
 
@@ -14,5 +14,6 @@ group :development do
   gem "fuubar"
   gem "coderay"
 end
-=end
+=begin
   gem 'rg_codebreaker', :path => '/home/admin1/rg_courses/rg_codebreaker'
+=end

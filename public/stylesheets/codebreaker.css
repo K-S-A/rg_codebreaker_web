@@ -3,11 +3,31 @@ body {
   font-family: Monaco;
   font-size: 14px;
 }
+
 #start {
-  position: fixed;
-  top: 0px;
-  width: 25em;
+  width: 25%;
   height: 100px;
+  position: absolute;
+  right: 60px;
+  top: 60px;
+}
+
+#settings_button {
+  width: 25%;
+  height: 100px;
+  position: absolute;
+  right: 440px;
+  top: 60px;
+}
+
+#settings_button input {
+  width: 100%;
+  height: 100px;
+  background: #133283;
+  font-size: 35px;
+  color: black;
+  border: inset black; 
+  text-align: center;
 }
 
 #start input {
@@ -17,6 +37,32 @@ body {
   font-size: 35px;
   color: black;
   border: inset black; 
+  text-align: center;
+}
+
+#settings {
+  font-size: 27px;
+  height: 35px;
+}
+
+#settings input {
+  font-size: 27px;
+  width: 45px;
+  background: #2852BF;
+  color: black;
+}
+
+#clearstat {
+  margin: 10px;
+  font-size: 27px;
+  border: solid red 1px;
+  width: 97%;
+}
+
+#clearstat input {
+  font-size: 27px;
+  background: #2852BF;
+  color: black;
 }
 
 #hint input {
@@ -29,40 +75,59 @@ body {
 }
 
 #loose {
-  margin-top: 120px;
-  width: 40%;
+*  margin-top: 120px;
+  width: 25%;
   font-size: 20px;
   border: outset;
+  text-align: center;
 }
 #winner{
-  margin-top: 120px;
-  width: 40%;
+*  margin-top: 120px;
+  width: 35%;
   font-size: 20px;
 }
 
 #container {
-  margin-top: 120px;
+*  margin-top: 120px;
   font-size: 20px;
 }
 
+#container input {
+  width: 25%;
+  height: 50px;
+  font-size: 40px;
+  color: black;
+  text-align: center;
+  background: #133283;
+}
+	
+#winner input {
+  width: 100%;
+  text-align: center;
+  height: 50px;
+  font-size: 40px;
+  color: black;
+  background: #133283;
+}
+
 #attempt {
-  width: 22%;
+  width: 25%;
   background: #2852BF;
   text-align: center;
 }
 
 #hint {
-  width: 11%;
+  width: 25%;
   height: 50px;
   background: #133283;
-  font-size: 20px;
+  font-size: 26px;
   text-align: center;
   color: black;
   border: inset black; 
 }
 
 #flash {
-  width: 22%;
+  width: 25%;
   height: 50px;
   background: #133283;
   font-size: 20px;
@@ -73,19 +138,49 @@ body {
 }
 
 #guess {
-
+  width: 25%;
+  background-color: #2852BF;
+  text-align: center;
 }
 
 #statistics {
   position: absolute;
-  top: 20px;
+  top: 180px;
   right: 20px;
+  width: 57%;
   border: 4px outset;
-  padding: 10px;
+  padding: 20px;
 }
 
 #statistics div {
   border: 4px double;
+  width: 45%;
+  height: 130px;
   padding: 0px 5px;
   margin-top: 5px;
 }
+
+#games_played {
+  float: left;
+}
+
+#games_won {
+  float: right;
+}
+
+#games_quot {
+  float: left;
+}
+
+#games_duration {
+  float: right;
+}
+
+#games_streak {
+  float: left;
+}
+
+#guess_count {
+  float: right;
+}
+

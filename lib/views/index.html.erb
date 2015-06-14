@@ -5,12 +5,34 @@
     <link rel="stylesheet" type="text/css" href="/stylesheets/codebreaker.css">
   </head>
   <body>
-<%# start (button) %>
-    <div id="start">
-      <form method="post" action="/start">
-        <input type="submit" value="Start new game!">
-      </form>
-    </div>
+    <% unless !adjust && @request.cookies['settings'] %>
+      <div id="settings">
+        <form method="post" action="/accept">
+          <label>Secret code's numbers range: minimum - </label>
+          <input name="first" type="number" min="0" max="9" value="<%= sets[0] %>" title="Must be from 0 to 9. If not - will be automatically set to the nearest number.">
+          <label>, maximum - </label>
+          <input name="last" type="number" min="0" max="9" value="<%= sets[1] %>" title="Must be from 0 to 9. If not - will be automatically set to the nearest number.">
+          <label>. Secret code length:</label>
+          <input name="length" type="number" min="1" max="15" value="<%= sets[2] %>" title="Minimum - 1, maximum - 15.">
+          <input type="submit" style="width: 100px;" value="Accept" title="Accept and start new game with this parameters.">
+        </form>
+      </div>
+      <div id="clearstat">
+        <form method="post" action="/clearstat">
+          <label>Untrack single player:</label>
+          <input name="nick" type="text" title="Enter player's nickname here." size="28"></br>
+          <input name="all" type="checkbox" style="width: 26px; height: 26px;"><label>Clear statistics for all players.</label></br>
+          <label>Enter administration password:</label>
+          <input name="passwd" type="password" title="Administrators password." size="20"></br>
+          <input type="submit" value="Clear selected" title="Submit after password enter." style="width: 20%; height: 100px; background: #133283; font-size: 35px; color: black; border: inset black; text-align: center; position: absolute; margin: -105px 1020px; color: red;">
+        </form>
+      </div>
+    <% else %>
+      <div id="settings">
+        <span>Secret code's numbers range: minimum - <b><%= sets[0] %></b>, maximum -
+        <b><%= sets[1] %></b>. Secret code length: <b><%= sets[-1] %></b>.</span>
+      </div>
+      <% end %>
     <% if loose %>
 <%# loose %>
       <div id="loose">
@@ -40,26 +62,26 @@
     <% elsif attempts %>
 <%# guess %>
       <div id="container">
-        <p>Enter your guess:</p>
+        <p>Enter your guess<b><%=" #{name}"if name %></b>:</p>
         <form method="post" action="/guess">
-          <input name="guess" type="text">
-          <input style="color:black;background: #133283;font-size: 20px;border: inset black;" type="submit" value="Go!">
+          <input name="guess" type="text" title="Enter code that have <%=sets[-1]%> numbers from <%= sets[0] %> to <%= sets[1] %>. Numbers may appear more than once."></br>
+          <input style="color:black;background: #133283;font-size: 40px;border: inset black;" type="submit" value="Go!" title="Compare guess with secret code!">
         </form>
       </div>
 <%# attempts %>
       <div id="attempt">
-        <p>Attempts left: <b><%= attempts %></b></p>
+        <p title="Number of attempts that left to break the code.">Attempts left: <b><%= attempts %></b></p>
       </div>
 <%# hint %>
       <% unless help%>
         <div id="hint">
           <form method="post" action="/hint">
-            <input type="submit" value="Get hint!">
+            <input type="submit" value="Get hint!" title="Show one random number of secret code!">
           </form>
         </div>
       <% else %>
         <div id="hint">
-          <p>Hint: ---<%= help %>---</p>
+          <b>---> <%= help %> <---</b>
         </div>
       <% end %>
     <% end %>
@@ -72,7 +94,7 @@
 <%# guess_log %>
     <% if guess_log %>
       <div id="guess">
-        <% guess_log.each do |item| %>
+        <% guess_log.reverse.each do |item| %>
           <h2>"<%= item.first %>" >> "<%= item.last %>"</h2>
         <% end %>
       </div>
@@ -84,7 +106,7 @@
           <p><b>Assertive players</b> (total games played)</p>
           <ol>
             <% stat_games_played.each do |name, games| %>
-              <li>"<%= name %>" - <%= games.count %></li>
+              <li><b>"<%= name %>"</b> - <%= render_stat(games) %>.</li>
             <% end %>
           </ol>
         </div>
@@ -92,10 +114,10 @@
 <%# statistics - by total games won %>
       <% if stat_games_won %>
         <div id="games_won">
-          <p><b>The most winning players</b> (total games won)</p>
+          <p><b>Hard codebreakers</b> (total games won)</p>
           <ol>
             <% stat_games_won.each do |name, games| %>
-              <li><%= name %> - <%= games.count %></li>
+              <li><b>"<%= name %>"</b> - <%= render_stat(games.count) %>.</li>
             <% end %>
           </ol>
         </div>
@@ -106,7 +128,7 @@
           <p><b>Players with the highest win rate</b></p>
           <ol>
             <% stat_games_quot.each do |name, quot| %>
-              <li><%= name %> - <%= quot %>%</li>
+              <li><b>"<%= name %>"</b> - <%= quot %>%.</li>
             <% end %>
           </ol>
         </div>
@@ -114,14 +136,50 @@
 <%# statistics - by the time needed to break code %>
       <% if stat_duration %>
         <div id="games_duration">
-          <p><b>Fastest players</b></p>
+          <p><b>The fastest codebreakers</b></p>
           <ol>
             <% stat_duration.each do |name, tm| %>
-              <li><%= name %> - <%= tm %> sec</li>
+              <li><b>"<%= name %>"</b> - <%= tm %> sec.</li>
+            <% end %>
+          </ol>
+        </div>
+      <% end %>
+<%# statistics - the longest win streak %>
+      <% if stat_win_streak %>
+        <div id="games_streak">
+          <p><b>Players with the longest win streak</b></p>
+          <ol>
+            <% stat_win_streak.each do |name, strk| %>
+              <li><b>"<%= name %>"</b> - <%= render_stat(strk) %>.</li>
+            <% end %>
+          </ol>
+        </div>
+      <% end %>
+<%# statistics - the lowest guess count %>
+      <% if stat_guess_count %>
+        <div id="guess_count">
+          <p><b>Lucky codebreakers</b> (attempts used)</p>
+          <ol>
+            <% stat_guess_count.each do |name, atmpts| %>
+              <li><b>"<%= name %>"</b> - <%= render_stat(atmpts, 'attempts') %>.</li>
             <% end %>
           </ol>
         </div>
       <% end %>
     </div>
+    <% if !adjust && @request.cookies['settings']%>
+<%# start (button) %>
+      <div id="start">
+        <form method="post" action="/start">
+          <input type="submit" value="Start new game!">
+        </form>
+      </div>
+<%# settings (button) %>
+      <div id="settings_button">
+        <form method="post" action="/settings">
+            <input type="submit" value="Game settings">
+            </form>
+        </div>
+      <% end %>
   </body>
 </html>
